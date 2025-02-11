@@ -19,6 +19,9 @@ import Login from "./pages/Login";
 import AdminLayout from "./pages/Admin/AdminLayout";
 import Dashboard from "./pages/admin/Dashboard";
 import Products from "./pages/admin/Products";
+import AddProduct from "./pages/Admin/AddProduct";
+import AllOrders from "./pages/Admin/AllOrders";
+import ManageOrders from "./pages/Admin/ManageOrders";
 
 const queryClient = new QueryClient();
 
@@ -95,6 +98,9 @@ function App() {
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<Dashboard />} />
               <Route path="products" element={<Products />} />
+              <Route path="products/add" element={<AddProduct />} />
+              <Route path="orders" element={<AllOrders />} />
+              <Route path="orders/manage" element={<ManageOrders />} />
             </Route>
 
             <Route path="*" element={<Navigate to="/" />} />
