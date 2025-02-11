@@ -11,6 +11,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { useNavigate } from "react-router-dom";
 
 // Mock product data (replace with actual data fetching logic)
 const product = {
@@ -30,7 +31,7 @@ const product = {
 const ProductDetail = () => {
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
-
+  const navigate = useNavigate();
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -160,7 +161,7 @@ const ProductDetail = () => {
 
           {/* Add to Cart and Wishlist */}
           <div className="flex space-x-4 mb-6">
-            <Button className="flex-1">
+            <Button className="flex-1" onClick={() => navigate("/cart")}>
               <ShoppingCart className="mr-2" size={20} /> Add to Cart
             </Button>
             <Button variant="outline">
