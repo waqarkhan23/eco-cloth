@@ -62,7 +62,7 @@ const Cart = () => {
       animate="visible"
       variants={containerVariants}
     >
-      <h1 className="text-4xl font-bold mb-8 text-center">Your Cart</h1>
+      <h1 className="text-4xl font-bold mb-8 text-primary">Your Cart</h1>
       {cartItems.length === 0 ? (
         <motion.div
           className="text-center py-16"

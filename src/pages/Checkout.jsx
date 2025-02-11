@@ -53,11 +53,12 @@ const Checkout = () => {
       variants={containerVariants}
     >
       <motion.h1
-        className="text-4xl font-bold mb-8 text-center"
+        className="text-4xl font-bold mb-8 text-primary"
         variants={itemVariants}
       >
         Checkout
       </motion.h1>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <motion.div variants={itemVariants}>
           <Card>

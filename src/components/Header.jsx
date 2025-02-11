@@ -2,12 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Menu, X, ShoppingCart, User, Search } from "lucide-react";
 import { Button } from "./ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
+
 import { Input } from "./ui/input";
 
 const Header = () => {
@@ -63,18 +58,14 @@ const Header = () => {
             >
               <ShoppingCart className="w-5 h-5" />
             </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <User className="w-5 h-5" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem>Profile</DropdownMenuItem>
-                <DropdownMenuItem>Settings</DropdownMenuItem>
-                <DropdownMenuItem>Logout</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate("/login")}
+            >
+              <User className="w-5 h-5" />
+            </Button>
           </div>
 
           {/* Mobile menu button */}
