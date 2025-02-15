@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
-const images = ["/banner1.jpg", "/banner2.png", "/banner4.jpeg"];
+const images = ["/abanner1.png", "/abanner2.png", "/abanner3.png"];
 
 const LandingPage = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -25,7 +25,7 @@ const LandingPage = () => {
           key={currentImageIndex}
           src={images[currentImageIndex]}
           alt="Background"
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-fit"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -34,7 +34,7 @@ const LandingPage = () => {
       </AnimatePresence>
 
       {/* Overlay */}
-      <div className="absolute inset-0 bg-black bg-opacity-50" />
+      <div className="absolute inset-0 bg-black bg-opacity-40" />
 
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen text-white">

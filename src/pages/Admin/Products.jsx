@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Trash2, Plus, Search } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -22,47 +22,23 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import useProductsQuery from "@/api/getProducts";
+import Loader from "@/components/Loader";
 
-// Mock data (replace with actual API call in production)
-const mockProducts = [
-  {
-    id: 1,
-    name: "Eco-friendly T-Shirt",
-    category: "Tops",
-    price: 29.99,
-    stock: 100,
-  },
-  {
-    id: 2,
-    name: "Organic Cotton Jeans",
-    category: "Bottoms",
-    price: 79.99,
-    stock: 50,
-  },
-  {
-    id: 3,
-    name: "Recycled Polyester Jacket",
-    category: "Outerwear",
-    price: 129.99,
-    stock: 30,
-  },
-  // Add more mock products as needed
-];
+import toast from "react-hot-toast";
+import axiosInstance from "@/utils/axios";
 
 const Products = () => {
-  const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [deleteProductId, setDeleteProductId] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const { data: products, isLoading, isError, error } = useProductsQuery();
 
-  useEffect(() => {
-    // Simulating API call
-    setProducts(mockProducts);
-  }, []);
-
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredProducts = products
+    ? products.filter((product) =>
+        product.name.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : [];
 
   const handleDeleteClick = (productId) => {
     setDeleteProductId(productId);
@@ -70,11 +46,39 @@ const Products = () => {
   };
 
   const handleDeleteConfirm = () => {
-    setProducts((prevProducts) =>
-      prevProducts.filter((product) => product.id !== deleteProductId)
-    );
-    setIsDeleteModalOpen(false);
+    try {
+      const response = axiosInstance.delete(`/products/${deleteProductId}`);
+      if (response.status === 200) {
+        toast({
+          type: "success",
+          title: "Product deleted successfully",
+        });
+        setDeleteProductId(null);
+        setIsDeleteModalOpen(false);
+      }
+    } catch (error) {
+      toast({
+        type: "error",
+        title: error.message || "Error deleting product",
+      });
+    }
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center w-full min-h-screen">
+        <Loader />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="container mx-auto px-4 py-8 text-center text-red-500">
+        <p>Error loading products: {error.message}</p>
+      </div>
+    );
+  }
 
   return (
     <motion.div
@@ -107,52 +111,58 @@ const Products = () => {
               </Button>
             </Link>
           </div>
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead>Price</TableHead>
-                  <TableHead>Stock</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                <AnimatePresence>
-                  {filteredProducts.map((product) => (
-                    <motion.tr
-                      key={product.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -20 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <TableCell className="font-medium">
-                        {product.name}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="secondary">{product.category}</Badge>
-                      </TableCell>
-                      <TableCell>PKR {product.price.toFixed(2)}</TableCell>
-                      <TableCell>{product.stock}</TableCell>
-                      <TableCell>
-                        <div className="flex space-x-2">
-                          <Button
-                            variant="destructive"
-                            size="icon"
-                            onClick={() => handleDeleteClick(product.id)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </motion.tr>
-                  ))}
-                </AnimatePresence>
-              </TableBody>
-            </Table>
-          </div>
+          {products && products.length > 0 ? (
+            <div className="rounded-md border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Category</TableHead>
+                    <TableHead>Price</TableHead>
+
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <AnimatePresence>
+                    {filteredProducts.map((product) => (
+                      <motion.tr
+                        key={product._id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <TableCell className="font-medium">
+                          {product.name}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="secondary">{product.category}</Badge>
+                        </TableCell>
+                        <TableCell>PKR {product.price.toFixed(2)}</TableCell>
+
+                        <TableCell>
+                          <div className="flex space-x-2">
+                            <Button
+                              variant="destructive"
+                              size="icon"
+                              onClick={() => handleDeleteClick(product._id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </motion.tr>
+                    ))}
+                  </AnimatePresence>
+                </TableBody>
+              </Table>
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <p>No products found.</p>
+            </div>
+          )}
         </CardContent>
       </Card>
 

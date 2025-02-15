@@ -42,7 +42,7 @@ const AdminLayout = () => {
       text: "Orders",
       children: [
         { icon: FaClipboardList, text: "All Orders", path: "/admin/orders" },
-        { icon: FaList, text: "Manage Orders", path: "/admin/orders/manage" },
+        // { icon: FaList, text: "Manage Orders", path: "/admin/orders/manage" },
       ],
     },
   ];

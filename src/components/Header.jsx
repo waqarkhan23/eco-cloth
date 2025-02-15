@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Menu, X, ShoppingCart, User, Search } from "lucide-react";
+import { Menu, X, ShoppingCart, User } from "lucide-react";
 import { Button } from "./ui/button";
-
-import { Input } from "./ui/input";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -41,14 +39,14 @@ const Header = () => {
 
           {/* Search, Cart, and User */}
           <div className="hidden md:flex items-center space-x-4">
-            <div className="relative">
+            {/* <div className="relative">
               <Input
                 type="text"
                 placeholder="Search..."
                 className="pl-8 pr-2 py-1 rounded-full bg-secondary/20 focus:bg-background"
               />
               <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-            </div>
+            </div> */}
             <Button
               variant="ghost"
               size="icon"

@@ -1,39 +1,22 @@
 /* eslint-disable react/no-unescaped-entities */
-import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { motion } from "framer-motion";
 import { ShoppingCart, Trash2, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
 import { Separator } from "@/components/ui/separator";
 import { Link } from "react-router-dom";
-
-// Mock cart data (replace with actual data fetching logic)
-const initialCartItems = [
-  {
-    id: 1,
-    name: "Cotton Suit For Women",
-    price: 29.99,
-    image: "/productalt3.jpeg",
-    quantity: 1,
-  },
-  {
-    id: 2,
-    name: "Denim Jacket",
-    price: 49.99,
-    image: "/productalt1.jpeg",
-    quantity: 2,
-  },
-];
+import { removeFromCart } from "@/store/cartSlice"; // Import the removeFromCart action
 
 const Cart = () => {
-  const [cartItems, setCartItems] = useState(initialCartItems);
+  const cartItems = useSelector((state) => state.cart.items);
+  const dispatch = useDispatch();
 
   const removeItem = (id) => {
-    setCartItems(cartItems.filter((item) => item.id !== id));
+    dispatch(removeFromCart(id));
   };
 
   const totalPrice = cartItems.reduce(
-    (total, item) => total + item.price * item.quantity,
+    (total, item) => total + item.price + 150,
     0
   );
 
@@ -75,10 +58,12 @@ const Cart = () => {
           <p className="text-gray-600 mb-8">
             Looks like you haven't added any items to your cart yet.
           </p>
-          <Button size="lg">
-            <ShoppingBag className="mr-2" size={20} />
-            Start Shopping
-          </Button>
+          <Link to="/">
+            <Button size="lg">
+              <ShoppingBag className="mr-2" size={20} />
+              Start Shopping
+            </Button>
+          </Link>
         </motion.div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -96,7 +81,7 @@ const Cart = () => {
                 />
                 <div className="flex-grow">
                   <h3 className="text-lg font-semibold">{item.name}</h3>
-                  <p className="text-gray-600">${item.price.toFixed(2)}</p>
+                  <p className="text-gray-600">PKR {item.price}</p>
                 </div>
                 <Button
                   variant="destructive"
@@ -117,14 +102,18 @@ const Cart = () => {
               {cartItems.map((item) => (
                 <div key={item.id} className="flex justify-between">
                   <span>{item.name}</span>
-                  <span>PKR {(item.price * item.quantity).toFixed(2)}</span>
+                  <span>PKR {item.price}</span>
                 </div>
               ))}
             </div>
             <Separator className="my-4" />
             <div className="flex justify-between font-semibold text-lg mb-6">
+              <span>Shipping Cost</span>
+              <span>PKR 150</span>
+            </div>
+            <div className="flex justify-between font-semibold text-lg mb-6">
               <span>Total</span>
-              <span>PKR {totalPrice.toFixed(2)}</span>
+              <span>PKR {totalPrice}</span>
             </div>
             <Link to="/checkout">
               <Button className="w-full">Proceed to Checkout</Button>

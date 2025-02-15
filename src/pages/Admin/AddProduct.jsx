@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+
 import {
   Select,
   SelectContent,
@@ -27,6 +27,10 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Upload, X } from "lucide-react";
 import { useDropzone } from "react-dropzone";
+import { useAddProduct } from "@/api/addProduct";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css"; // Import Quill styles
+import axiosInstance from "@/utils/axios";
 
 const ImageUpload = ({ images, setImages }) => {
   const onDrop = useCallback(
@@ -99,15 +103,16 @@ const formSchema = z.object({
   price: z.string().refine((val) => !isNaN(parseFloat(val)), {
     message: "Price must be a number.",
   }),
-  category: z.string().min(1, { message: "Please select a category." }),
-  size: z.string().min(1, { message: "Please select a size." }),
+  category: z.enum(["Men", "Women", "Kids"], {
+    message: "Please select a valid category.",
+  }),
   color: z.string().min(1, { message: "Please enter a color." }),
 });
 
 const AddProduct = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [images, setImages] = useState([]);
-
+  const { mutate: addProduct, isLoading, isError, error } = useAddProduct();
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -115,34 +120,57 @@ const AddProduct = () => {
       description: "",
       price: "",
       category: "",
-      size: "",
+      size: [],
       color: "",
     },
   });
 
   const onSubmit = async (values) => {
     setIsSubmitting(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    try {
+      // Upload images and get back URLs
+      const imageUrls = await uploadImages(images);
+      console.log("Image URLs:", imageUrls);
+      // Prepare the product data
+      const productData = {
+        ...values,
+        price: parseFloat(values.price),
+        images: imageUrls,
+      };
 
-    // Here you would typically upload the images to your server or a cloud storage service
-    // and get back URLs to store with the product data
-    const imageUrls = await uploadImages(images);
+      // Use the addProduct mutation to add the product
+      await addProduct(productData);
 
-    console.log({ ...values, images: imageUrls });
-    setIsSubmitting(false);
-    form.reset();
-    setImages([]);
+      // Reset form and state after successful submission
+      form.reset();
+      setImages([]);
+      // You might want to show a success message here
+    } catch (error) {
+      console.error("Error adding product:", error);
+      // You might want to show an error message to the user here
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // This function would handle the actual image upload to your server or cloud storage
   const uploadImages = async (images) => {
-    // Placeholder for image upload logic
-    // In a real application, you would upload each image and return the URLs
-    console.log("Uploading images:", images);
-    return images.map(
-      (image, index) => `https://example.com/image${index}.jpg`
-    );
+    try {
+      const formData = new FormData();
+      images.forEach((image) => {
+        formData.append("images", image);
+      });
+
+      const response = await axiosInstance.post("/upload-images", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error uploading images:", error);
+      throw new Error("Failed to upload images");
+    }
   };
 
   return (
@@ -204,39 +232,12 @@ const AddProduct = () => {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="shirts">Shirts</SelectItem>
-                          <SelectItem value="pants">Pants</SelectItem>
-                          <SelectItem value="dresses">Dresses</SelectItem>
-                          <SelectItem value="accessories">
+                          <SelectItem value="Men">Men</SelectItem>
+                          <SelectItem value="Women">Women</SelectItem>
+                          <SelectItem value="Kids">Kids</SelectItem>
+                          <SelectItem value="Accessories">
                             Accessories
                           </SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="size"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Size</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a size" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="xs">XS</SelectItem>
-                          <SelectItem value="s">S</SelectItem>
-                          <SelectItem value="m">M</SelectItem>
-                          <SelectItem value="l">L</SelectItem>
-                          <SelectItem value="xl">XL</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -273,18 +274,24 @@ const AddProduct = () => {
                   <FormItem>
                     <FormLabel>Description</FormLabel>
                     <FormControl>
-                      <Textarea
+                      <ReactQuill
+                        theme="snow"
                         placeholder="Enter product description"
                         {...field}
-                        rows={4}
+                        onChange={(content) => field.onChange(content)}
                       />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full" disabled={isSubmitting}>
-                {isSubmitting ? (
+
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={isSubmitting || isLoading}
+              >
+                {isSubmitting || isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Adding Product...
@@ -296,6 +303,12 @@ const AddProduct = () => {
                   </>
                 )}
               </Button>
+
+              {isError && (
+                <p className="text-red-500 text-sm mt-2">
+                  Error adding product: {error.message}
+                </p>
+              )}
             </form>
           </Form>
         </CardContent>

@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { CreditCard, Truck, AlertCircle } from "lucide-react";
+import { CheckCircle, Truck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,17 +15,78 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { useDispatch, useSelector } from "react-redux";
+import { useCreateOrder } from "@/api/createOrder";
+import { useNavigate } from "react-router-dom";
+import { clearCart } from "@/store/cartSlice";
 
 const Checkout = () => {
-  const [paymentMethod, setPaymentMethod] = useState("cod");
+  const cartItems = useSelector((state) => state.cart.items);
+  const [showModal, setShowModal] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { mutate: createOrder } = useCreateOrder();
+  const [orderData, setOrderData] = useState({
+    customerInfo: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      phoneNumber: "",
+    },
+    shippingAddress: {
+      address: "",
+      city: "",
+      province: "",
+      postalCode: "",
+    },
+    paymentMethod: "Cash on Delivery",
+    orderItems: [],
+    totalAmount: 0,
+  });
+
+  const handleInputChange = (section, field, value) => {
+    setOrderData((prevData) => ({
+      ...prevData,
+      [section]: {
+        ...prevData[section],
+        [field]: value,
+      },
+    }));
+  };
+
+  useEffect(() => {
+    const total = cartItems.reduce((sum, item) => sum + item.price, 0);
+    const orderItems = [];
+    console.log(cartItems);
+    cartItems.map((item) => {
+      orderItems.push(item.id);
+    });
+
+    setOrderData((prevData) => ({
+      ...prevData,
+      totalAmount: total,
+      orderItems: orderItems,
+    }));
+  }, [cartItems]);
+
+  // ... existing handleInputChange function
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    createOrder(orderData, {
+      onSuccess: () => {
+        setShowModal(true);
+        setTimeout(() => {
+          setShowModal(false);
+          dispatch(clearCart());
+          navigate("/");
+        }, 5000);
+      },
+      onError: (error) => {
+        console.error("Failed to create order:", error);
+      },
+    });
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -44,6 +105,9 @@ const Checkout = () => {
       opacity: 1,
     },
   };
+  const formatPrice = (price) => {
+    return price.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
 
   return (
     <motion.div
@@ -59,53 +123,157 @@ const Checkout = () => {
         Checkout
       </motion.h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <motion.div variants={itemVariants}>
-          <Card>
-            <CardHeader>
-              <CardTitle>Shipping Information</CardTitle>
-              <CardDescription>
-                Please enter your shipping details.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" placeholder="example@gmail.com" />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="firstName">First Name</Label>
-                  <Input id="firstName" placeholder="John" />
+      <form onSubmit={handleSubmit}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <motion.div variants={itemVariants}>
+            <Card>
+              <CardHeader>
+                <CardTitle>Customer Information</CardTitle>
+                <CardDescription>
+                  Please enter your personal details.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="firstName">First Name</Label>
+                    <Input
+                      id="firstName"
+                      value={orderData.customerInfo.firstName}
+                      onChange={(e) =>
+                        handleInputChange(
+                          "customerInfo",
+                          "firstName",
+                          e.target.value
+                        )
+                      }
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="lastName">Last Name</Label>
+                    <Input
+                      id="lastName"
+                      value={orderData.customerInfo.lastName}
+                      onChange={(e) =>
+                        handleInputChange(
+                          "customerInfo",
+                          "lastName",
+                          e.target.value
+                        )
+                      }
+                      required
+                    />
+                  </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="lastName">Last Name</Label>
-                  <Input id="lastName" placeholder="Doe" />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="address">Address</Label>
-                <Input id="address" placeholder="123 Main St" />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="city">City</Label>
-                  <Input id="city" placeholder="New York" />
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={orderData.customerInfo.email}
+                    onChange={(e) =>
+                      handleInputChange("customerInfo", "email", e.target.value)
+                    }
+                    required
+                  />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="zipCode">ZIP Code</Label>
-                  <Input id="zipCode" placeholder="10001" />
+                  <Label htmlFor="phoneNumber">Phone Number</Label>
+                  <Input
+                    id="phoneNumber"
+                    value={orderData.customerInfo.phoneNumber}
+                    onChange={(e) =>
+                      handleInputChange(
+                        "customerInfo",
+                        "phoneNumber",
+                        e.target.value
+                      )
+                    }
+                    required
+                  />
                 </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
-                <Input id="phone" placeholder="+1 (555) 123-4567" />
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
+              </CardContent>
+            </Card>
+          </motion.div>
 
-        <motion.div variants={itemVariants}>
+          <motion.div variants={itemVariants}>
+            <Card>
+              <CardHeader>
+                <CardTitle>Shipping Address</CardTitle>
+                <CardDescription>
+                  Please enter your shipping details.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="address">Address</Label>
+                  <Input
+                    id="address"
+                    value={orderData.shippingAddress.address}
+                    onChange={(e) =>
+                      handleInputChange(
+                        "shippingAddress",
+                        "address",
+                        e.target.value
+                      )
+                    }
+                    required
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="city">City</Label>
+                    <Input
+                      id="city"
+                      value={orderData.shippingAddress.city}
+                      onChange={(e) =>
+                        handleInputChange(
+                          "shippingAddress",
+                          "city",
+                          e.target.value
+                        )
+                      }
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="province">Province</Label>
+                    <Input
+                      id="province"
+                      value={orderData.shippingAddress.province}
+                      onChange={(e) =>
+                        handleInputChange(
+                          "shippingAddress",
+                          "province",
+                          e.target.value
+                        )
+                      }
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="postalCode">Postal Code</Label>
+                  <Input
+                    id="postalCode"
+                    value={orderData.shippingAddress.postalCode}
+                    onChange={(e) =>
+                      handleInputChange(
+                        "shippingAddress",
+                        "postalCode",
+                        e.target.value
+                      )
+                    }
+                    required
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </div>
+
+        <motion.div className="mt-8 max-w-2xl" variants={itemVariants}>
           <Card>
             <CardHeader>
               <CardTitle>Payment Method</CardTitle>
@@ -113,52 +281,28 @@ const Checkout = () => {
             </CardHeader>
             <CardContent>
               <RadioGroup
-                defaultValue="cod"
-                onValueChange={setPaymentMethod}
+                defaultValue="Cash on Delivery"
+                onValueChange={(value) =>
+                  handleInputChange("paymentMethod", "", value)
+                }
                 className="space-y-4"
               >
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="cod" id="cod" />
+                  <RadioGroupItem value="Cash on Delivery" id="cod" />
                   <Label htmlFor="cod" className="flex items-center">
                     <Truck className="mr-2" /> Cash on Delivery
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="card" id="card" />
-                  <Label htmlFor="card" className="flex items-center">
-                    <CreditCard className="mr-2" /> Credit/Debit Card
                   </Label>
                 </div>
               </RadioGroup>
             </CardContent>
             <CardFooter>
-              {paymentMethod === "card" && (
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button className="w-full">Pay with Card</Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Card Payment Unavailable</DialogTitle>
-                      <DialogDescription>
-                        We're sorry, but card payments are not available at the
-                        moment. Please choose Cash on Delivery or try again
-                        later.
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div className="flex items-center justify-center text-amber-500">
-                      <AlertCircle size={48} />
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              )}
-              {paymentMethod === "cod" && (
-                <Button className="w-full">Place Order</Button>
-              )}
+              <Button type="submit" className="w-full">
+                Place Order
+              </Button>
             </CardFooter>
           </Card>
         </motion.div>
-      </div>
+      </form>
 
       <motion.div className="mt-8" variants={itemVariants}>
         <Card>
@@ -167,23 +311,49 @@ const Checkout = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
+              {cartItems.map((item) => (
+                <div key={item.id} className="flex justify-between">
+                  <span>{item.name}</span>
+                  <span>PKR {formatPrice(item.price)}</span>
+                </div>
+              ))}
+              <Separator />
               <div className="flex justify-between">
                 <span>Subtotal</span>
-                <span>PKR 99.99</span>
+                <span>PKR {formatPrice(orderData.totalAmount)}</span>
               </div>
               <div className="flex justify-between">
                 <span>Shipping</span>
-                <span>PKR 9.99</span>
+                <span>PKR 150</span>
               </div>
               <Separator />
               <div className="flex justify-between font-bold">
                 <span>Total</span>
-                <span>PKR 109.98</span>
+                <span>PKR {formatPrice(orderData.totalAmount + 150)}</span>
               </div>
             </div>
           </CardContent>
         </Card>
       </motion.div>
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-white p-8 rounded-lg shadow-lg text-center"
+          >
+            <CheckCircle className="text-green-500 w-16 h-16 mx-auto mb-4" />
+            <h2 className="text-2xl font-bold mb-2">
+              Order Placed Successfully!
+            </h2>
+            <p className="mb-4">Your order will be delivered in 5-7 days.</p>
+            <p className="font-bold mb-4">
+              Total Amount: PKR {formatPrice(orderData.totalAmount + 150)}
+            </p>
+            <p>Redirecting to home page...</p>
+          </motion.div>
+        </div>
+      )}
     </motion.div>
   );
 };

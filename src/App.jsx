@@ -6,7 +6,9 @@ import {
 } from "react-router-dom";
 import { Provider } from "react-redux";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import store from "@/store/store";
+import { store, persistor } from "@/store/store";
+import { PersistGate } from "redux-persist/integration/react";
+
 import { Toaster } from "react-hot-toast";
 import LandingPage from "./pages/LandingPage";
 import Header from "./components/Header";
@@ -22,92 +24,98 @@ import Products from "./pages/Admin/Products";
 import AddProduct from "./pages/Admin/AddProduct";
 import AllOrders from "./pages/Admin/AllOrders";
 import ManageOrders from "./pages/Admin/ManageOrders";
-
+import { AuthProvider } from "./utils/AuthContext";
+import ProtectedRoute from "./utils/ProtectedRoutes";
 const queryClient = new QueryClient();
 
 function App() {
   return (
     <Provider store={store}>
-      <QueryClientProvider client={queryClient}>
-        <Router>
-          <Routes>
-            {/* Public routes */}
-            <Route
-              path="/"
-              element={
-                <>
-                  <Header />
-                  <main className="flex-grow">
-                    <LandingPage />
-                  </main>
-                  <Footer />
-                </>
-              }
-            />
-            <Route
-              path="/shop"
-              element={
-                <>
-                  <Header />
-                  <main className="flex-grow">
-                    <Shop />
-                  </main>
-                  <Footer />
-                </>
-              }
-            />
-            <Route
-              path="/cart"
-              element={
-                <>
-                  <Header />
-                  <main className="flex-grow">
-                    <Cart />
-                  </main>
-                  <Footer />
-                </>
-              }
-            />
-            <Route
-              path="/checkout"
-              element={
-                <>
-                  <Header />
-                  <main className="flex-grow">
-                    <Checkout />
-                  </main>
-                  <Footer />
-                </>
-              }
-            />
-            <Route
-              path="/product-detail"
-              element={
-                <>
-                  <Header />
-                  <main className="flex-grow">
-                    <ProductDetail />
-                  </main>
-                  <Footer />
-                </>
-              }
-            />
-            <Route path="/login" element={<Login />} />
+      <PersistGate loading={null} persistor={persistor}>
+        <QueryClientProvider client={queryClient}>
+          <Router>
+            <AuthProvider>
+              <Routes>
+                {/* Public routes */}
+                <Route
+                  path="/"
+                  element={
+                    <>
+                      <Header />
+                      <main className="flex-grow">
+                        <LandingPage />
+                      </main>
+                      <Footer />
+                    </>
+                  }
+                />
+                <Route
+                  path="/shop"
+                  element={
+                    <>
+                      <Header />
+                      <main className="flex-grow">
+                        <Shop />
+                      </main>
+                      <Footer />
+                    </>
+                  }
+                />
+                <Route
+                  path="/cart"
+                  element={
+                    <>
+                      <Header />
+                      <main className="flex-grow">
+                        <Cart />
+                      </main>
+                      <Footer />
+                    </>
+                  }
+                />
+                <Route
+                  path="/checkout"
+                  element={
+                    <>
+                      <Header />
+                      <main className="flex-grow">
+                        <Checkout />
+                      </main>
+                      <Footer />
+                    </>
+                  }
+                />
+                <Route
+                  path="/product-detail/:id"
+                  element={
+                    <>
+                      <Header />
+                      <main className="flex-grow">
+                        <ProductDetail />
+                      </main>
+                      <Footer />
+                    </>
+                  }
+                />
+                <Route path="/login" element={<Login />} />
 
-            {/* Admin routes */}
-            <Route path="/admin" element={<AdminLayout />}>
-              <Route index element={<Dashboard />} />
-              <Route path="products" element={<Products />} />
-              <Route path="products/add" element={<AddProduct />} />
-              <Route path="orders" element={<AllOrders />} />
-              <Route path="orders/manage" element={<ManageOrders />} />
-            </Route>
-
-            <Route path="*" element={<Navigate to="/" />} />
-          </Routes>
-          <Toaster position="top-right" />
-        </Router>
-      </QueryClientProvider>
+                {/* Admin routes */}
+                <Route element={<ProtectedRoute />}>
+                  <Route path="/admin" element={<AdminLayout />}>
+                    <Route index element={<Dashboard />} />
+                    <Route path="products" element={<Products />} />
+                    <Route path="products/add" element={<AddProduct />} />
+                    <Route path="orders" element={<AllOrders />} />
+                    <Route path="orders/manage" element={<ManageOrders />} />
+                  </Route>
+                </Route>
+                <Route path="*" element={<Navigate to="/" />} />
+              </Routes>
+              <Toaster position="top-right" />
+            </AuthProvider>
+          </Router>
+        </QueryClientProvider>
+      </PersistGate>
     </Provider>
   );
 }

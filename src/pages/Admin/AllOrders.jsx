@@ -26,43 +26,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
-// Mock data (replace with actual API call in production)
-const mockOrders = [
-  {
-    id: "ORD001",
-    customer: "John Doe",
-    date: "2023-05-01",
-    total: 129.99,
-    status: "Processing",
-    items: 3,
-  },
-  {
-    id: "ORD002",
-    customer: "Jane Smith",
-    date: "2023-05-02",
-    total: 79.99,
-    status: "Shipped",
-    items: 2,
-  },
-  {
-    id: "ORD003",
-    customer: "Bob Johnson",
-    date: "2023-05-03",
-    total: 199.99,
-    status: "Delivered",
-    items: 5,
-  },
-  {
-    id: "ORD004",
-    customer: "Alice Brown",
-    date: "2023-05-04",
-    total: 59.99,
-    status: "Cancelled",
-    items: 1,
-  },
-  // Add more mock orders as needed
-];
+import axiosInstance from "@/utils/axios";
+import toast from "react-hot-toast";
 
 const statusColors = {
   Processing: "bg-yellow-500",
@@ -73,41 +38,37 @@ const statusColors = {
 
 const AllOrders = () => {
   const [orders, setOrders] = useState([]);
-  const [filteredOrders, setFilteredOrders] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [sortBy, setSortBy] = useState("date");
   const [sortOrder, setSortOrder] = useState("desc");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
+  const fetchOrders = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axiosInstance.get("/orders", {
+        params: {
+          search: searchTerm,
+          status: statusFilter !== "All" ? statusFilter : undefined,
+          sortBy,
+          sortOrder,
+        },
+      });
+      setOrders(response.data.orders || []);
+    } catch (err) {
+      setError("Failed to fetch orders. Please try again.");
+      console.error("Error fetching orders:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  console.log(orders);
   useEffect(() => {
-    // Simulating API call
-    setOrders(mockOrders);
-    setFilteredOrders(mockOrders);
-  }, []);
-
-  useEffect(() => {
-    const filtered = orders.filter((order) => {
-      const matchesSearch =
-        order.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        order.id.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesStatus =
-        statusFilter === "All" || order.status === statusFilter;
-      return matchesSearch && matchesStatus;
-    });
-
-    const sorted = [...filtered].sort((a, b) => {
-      if (sortBy === "date") {
-        return sortOrder === "asc"
-          ? new Date(a.date) - new Date(b.date)
-          : new Date(b.date) - new Date(a.date);
-      } else if (sortBy === "total") {
-        return sortOrder === "asc" ? a.total - b.total : b.total - a.total;
-      }
-      return 0;
-    });
-
-    setFilteredOrders(sorted);
-  }, [searchTerm, statusFilter, sortBy, sortOrder, orders]);
+    fetchOrders();
+  }, [searchTerm, statusFilter, sortBy, sortOrder]);
 
   const handleSort = (field) => {
     if (sortBy === field) {
@@ -117,7 +78,26 @@ const AllOrders = () => {
       setSortOrder("asc");
     }
   };
+  const handleRefresh = () => {
+    fetchOrders();
+  };
 
+  const handleStatusUpdate = async (orderId, newStatus) => {
+    try {
+      const response = await axiosInstance.put(`/orders/${orderId}/status`, {
+        status: newStatus,
+      });
+      if (response.data.success) {
+        toast.success("Status updated successfully");
+        fetchOrders(); // Refresh the orders list
+      } else {
+        toast("Failed to update order status");
+      }
+    } catch (error) {
+      console.error("Error updating order status:", error);
+      toast("Failed to update order status");
+    }
+  };
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -152,7 +132,7 @@ const AllOrders = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="All">All Statuses</SelectItem>
-                <SelectItem value="Processing">Processing</SelectItem>
+                <SelectItem value="Pending">Pending</SelectItem>
                 <SelectItem value="Shipped">Shipped</SelectItem>
                 <SelectItem value="Delivered">Delivered</SelectItem>
                 <SelectItem value="Cancelled">Cancelled</SelectItem>
@@ -175,7 +155,7 @@ const AllOrders = () => {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button className="w-full md:w-auto">
+            <Button className="w-full md:w-auto" onClick={handleRefresh}>
               <RefreshCw className="mr-2" size={20} />
               Refresh
             </Button>
@@ -183,14 +163,17 @@ const AllOrders = () => {
         </CardContent>
       </Card>
 
+      {loading && <p>Loading orders...</p>}
+      {error && <p className="text-red-500">{error}</p>}
+
       <AnimatePresence>
         <motion.div
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           layout
         >
-          {filteredOrders.map((order) => (
+          {orders.map((order) => (
             <motion.div
-              key={order.id}
+              key={order._id}
               layout
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -200,22 +183,22 @@ const AllOrders = () => {
               <Card className="h-full">
                 <CardHeader>
                   <CardTitle className="flex justify-between items-center">
-                    <span>{order.id}</span>
-                    <Badge className={statusColors[order.status]}>
-                      {order.status}
+                    <span>{order.orderId}</span>
+                    <Badge className={statusColors[order.orderStatus]}>
+                      {order.orderStatus}
                     </Badge>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
-                    <p className="text-lg font-semibold">{order.customer}</p>
+                    <p className="text-lg font-semibold">{`${order.customerInfo.firstName} ${order.customerInfo.lastName}`}</p>
                     <p className="text-sm text-gray-500">
-                      {format(new Date(order.date), "PPP")}
+                      {format(new Date(order.createdAt), "PPP")}
                     </p>
                     <p className="text-lg font-bold">
-                      ${order.total.toFixed(2)}
+                      {order.totalAmount.toFixed(2)}
                     </p>
-                    <p className="text-sm">{order.items} item(s)</p>
+                    <p className="text-sm">{order.orderItems.length} item(s)</p>
                     <div className="flex justify-between items-center mt-4">
                       <Dialog>
                         <DialogTrigger asChild>
@@ -224,38 +207,110 @@ const AllOrders = () => {
                             View Details
                           </Button>
                         </DialogTrigger>
-                        <DialogContent>
+                        <DialogContent className="max-w-3xl">
                           <DialogHeader>
                             <DialogTitle>
-                              Order Details - {order.id}
+                              Order Details - {order.orderId}
                             </DialogTitle>
                           </DialogHeader>
-                          {/* Add more order details here */}
-                          <div className="mt-4 space-y-2">
-                            <p>
-                              <strong>Customer:</strong> {order.customer}
-                            </p>
-                            <p>
-                              <strong>Date:</strong>{" "}
-                              {format(new Date(order.date), "PPP")}
-                            </p>
-                            <p>
-                              <strong>Total:</strong> ${order.total.toFixed(2)}
-                            </p>
-                            <p>
-                              <strong>Status:</strong> {order.status}
-                            </p>
-                            <p>
-                              <strong>Items:</strong> {order.items}
-                            </p>
+                          <div className="mt-4 space-y-4">
+                            <div>
+                              <h3 className="text-lg font-semibold mb-2">
+                                Customer Information
+                              </h3>
+                              <p>
+                                <strong>Name:</strong>{" "}
+                                {`${order.customerInfo.firstName} ${order.customerInfo.lastName}`}
+                              </p>
+                              <p>
+                                <strong>Email:</strong>{" "}
+                                {order.customerInfo.email}
+                              </p>
+                              <p>
+                                <strong>Phone:</strong>{" "}
+                                {order.customerInfo.phoneNumber}
+                              </p>
+                            </div>
+                            <div>
+                              <h3 className="text-lg font-semibold mb-2">
+                                Order Information
+                              </h3>
+                              <p>
+                                <strong>Order ID:</strong> {order.orderId}
+                              </p>
+                              <p>
+                                <strong>Date:</strong>{" "}
+                                {format(
+                                  new Date(order.createdAt),
+                                  "PPP 'at' pp"
+                                )}
+                              </p>
+                              <p>
+                                <strong>Total Amount:</strong> $
+                                {order.totalAmount.toFixed(2)}
+                              </p>
+                              <p>
+                                <strong>Status:</strong> {order.orderStatus}
+                              </p>
+                              <p>
+                                <strong>Payment Method:</strong>{" "}
+                                {order.paymentMethod}
+                              </p>
+                            </div>
+                            <div>
+                              <h3 className="text-lg font-semibold mb-2">
+                                Shipping Address
+                              </h3>
+                              <p>{order.shippingAddress.address}</p>
+                              <p>
+                                {order.shippingAddress.city},{" "}
+                                {order.shippingAddress.province}{" "}
+                                {order.shippingAddress.postalCode}
+                              </p>
+                            </div>
+                            <div>
+                              <h3 className="text-lg font-semibold mb-2">
+                                Order Items
+                              </h3>
+                              <table className="w-full">
+                                <thead>
+                                  <tr>
+                                    <th className="text-left">Product</th>
+
+                                    <th className="text-left">Price</th>
+                                    <th className="text-left">Total</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {order.orderItems.map((item, index) => (
+                                    <tr key={index}>
+                                      <td>{item.name}</td>
+
+                                      <td>{item.price.toFixed(2)}</td>
+                                      <td>{(item.price + 150).toFixed(2)}</td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
                           </div>
                         </DialogContent>
                       </Dialog>
-                      <Select defaultValue={order.status}>
+                      <Select
+                        value={order.orderStatus}
+                        onValueChange={(newStatus) =>
+                          handleStatusUpdate(order._id, newStatus)
+                        }
+                      >
                         <SelectTrigger className="w-[140px]">
-                          <SelectValue placeholder="Update Status" />
+                          <SelectValue>
+                            <Badge className={statusColors[order.orderStatus]}>
+                              {order.orderStatus}
+                            </Badge>
+                          </SelectValue>
                         </SelectTrigger>
                         <SelectContent>
+                          <SelectItem value="Pending">Pending</SelectItem>
                           <SelectItem value="Processing">Processing</SelectItem>
                           <SelectItem value="Shipped">Shipped</SelectItem>
                           <SelectItem value="Delivered">Delivered</SelectItem>

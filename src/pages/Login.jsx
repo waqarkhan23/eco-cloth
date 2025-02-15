@@ -5,17 +5,33 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { FaLock, FaUser } from "react-icons/fa";
+import { useAuth } from "@/utils/AuthContext";
+import { useMutation } from "@tanstack/react-query";
+import axiosInstance from "@/utils/axios";
 
 const Login = () => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const { login } = useAuth();
+
+  const loginMutation = useMutation({
+    mutationFn: async (credentials) => {
+      const response = await axiosInstance.post("/login", credentials);
+      return response.data;
+    },
+    onSuccess: (data) => {
+      login(data.user, data.token);
+      navigate("/admin");
+    },
+    onError: (error) => {
+      console.error("Login failed:", error);
+    },
+  });
 
   const handleLogin = (e) => {
     e.preventDefault();
-    // Add your login logic here
-    // For now, we'll just redirect to the admin dashboard
-    navigate("/admin");
+    loginMutation.mutate({ email, password });
   };
 
   return (
@@ -41,15 +57,15 @@ const Login = () => {
 
           <form onSubmit={handleLogin} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="email">Email</Label>
               <div className="relative">
                 <FaUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
                 <Input
-                  id="username"
-                  type="text"
-                  placeholder="Enter your username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  id="email"
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="pl-10"
                   required
                 />
@@ -76,8 +92,9 @@ const Login = () => {
               <Button
                 type="submit"
                 className="w-full bg-primary hover:bg-primary/90 text-white"
+                disabled={loginMutation.isLoading}
               >
-                Login
+                {loginMutation.isLoading ? "Logging in..." : "Login"}
               </Button>
             </motion.div>
           </form>
