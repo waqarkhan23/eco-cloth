@@ -143,7 +143,7 @@ const LandingPage = () => {
         </svg>
       </motion.div>
 
-      <section className="relative hpy-24 bg-gradient-to-b from-background to-secondary">
+      <section className="relative py-24 bg-gradient-to-b from-background to-secondary">
         <div className="container mx-auto px-4">
           <h2 className="text-4xl font-bold mb-12 text-center text-primary">
             Featured Products
@@ -162,7 +162,7 @@ const LandingPage = () => {
                 >
                   <div className="p-1">
                     <Card>
-                      <CardContent className="flex flex-col items-center p-4">
+                      <CardContent className="flex flex-col items-center p-6">
                         <img
                           src={product.image}
                           alt={product.name}
