@@ -16,7 +16,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
-            <h2 className="text-2xl font-bold text-primary">EcoCloth</h2>
+            <h2 className="text-2xl font-bold text-primary">Stylista</h2>
             <p className="text-muted-foreground">
               Sustainable fashion for a better tomorrow. Join us in our mission
               to make the world a little greener, one garment at a time.
@@ -85,7 +85,7 @@ const Footer = () => {
         {/* Bottom Section */}
         <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <div className="text-sm text-muted-foreground">
-            © 2023 EcoCloth. All rights reserved.
+            © 2025 Stylista. All rights reserved.
           </div>
           <div className="flex space-x-4">
             <Button variant="ghost" size="icon">

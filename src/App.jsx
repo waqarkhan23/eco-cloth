@@ -26,6 +26,8 @@ import AllOrders from "./pages/Admin/AllOrders";
 import ManageOrders from "./pages/Admin/ManageOrders";
 import { AuthProvider } from "./utils/AuthContext";
 import ProtectedRoute from "./utils/ProtectedRoutes";
+import About from "./pages/About";
+import ContactUs from "./pages/Contact";
 const queryClient = new QueryClient();
 
 function App() {
@@ -62,12 +64,36 @@ function App() {
                   }
                 />
                 <Route
+                  path="/about"
+                  element={
+                    <>
+                      <Header />
+                      <main className="flex-grow">
+                        <About />
+                      </main>
+                      <Footer />
+                    </>
+                  }
+                />
+                <Route
                   path="/cart"
                   element={
                     <>
                       <Header />
                       <main className="flex-grow">
                         <Cart />
+                      </main>
+                      <Footer />
+                    </>
+                  }
+                />
+                <Route
+                  path="/contact"
+                  element={
+                    <>
+                      <Header />
+                      <main className="flex-grow">
+                        <ContactUs />
                       </main>
                       <Footer />
                     </>
