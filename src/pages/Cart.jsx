@@ -37,6 +37,9 @@ const Cart = () => {
       opacity: 1,
     },
   };
+  const formatPrice = (price) => {
+    return price.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
 
   return (
     <motion.div
@@ -81,7 +84,7 @@ const Cart = () => {
                 />
                 <div className="flex-grow">
                   <h3 className="text-lg font-semibold">{item.name}</h3>
-                  <p className="text-gray-600">PKR {item.price}</p>
+                  <p className="text-gray-600">PKR {formatPrice(item.price)}</p>
                 </div>
                 <Button
                   variant="destructive"
@@ -102,7 +105,7 @@ const Cart = () => {
               {cartItems.map((item) => (
                 <div key={item.id} className="flex justify-between">
                   <span>{item.name}</span>
-                  <span>PKR {item.price}</span>
+                  <span>PKR {formatPrice(item.price)}</span>
                 </div>
               ))}
             </div>
@@ -113,7 +116,7 @@ const Cart = () => {
             </div>
             <div className="flex justify-between font-semibold text-lg mb-6">
               <span>Total</span>
-              <span>PKR {totalPrice}</span>
+              <span>PKR {formatPrice(totalPrice)}</span>
             </div>
             <Link to="/checkout">
               <Button className="w-full">Proceed to Checkout</Button>

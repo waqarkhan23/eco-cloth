@@ -207,7 +207,7 @@ const AllOrders = () => {
                             View Details
                           </Button>
                         </DialogTrigger>
-                        <DialogContent className="max-w-3xl">
+                        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
                           <DialogHeader>
                             <DialogTitle>
                               Order Details - {order.orderId}
@@ -278,18 +278,43 @@ const AllOrders = () => {
                                     <th className="text-left">Product</th>
 
                                     <th className="text-left">Price</th>
-                                    <th className="text-left">Total</th>
                                   </tr>
                                 </thead>
                                 <tbody>
                                   {order.orderItems.map((item, index) => (
                                     <tr key={index}>
                                       <td>{item.name}</td>
-
                                       <td>{item.price.toFixed(2)}</td>
-                                      <td>{(item.price + 150).toFixed(2)}</td>
                                     </tr>
                                   ))}
+                                  <tr className="border-t">
+                                    <td className="font-semibold">Subtotal</td>
+                                    <td>
+                                      {order.orderItems
+                                        .reduce(
+                                          (sum, item) => sum + item.price,
+                                          0
+                                        )
+                                        .toFixed(2)}
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td className="font-semibold">
+                                      Shipping Fee
+                                    </td>
+                                    <td>150.00</td>
+                                  </tr>
+                                  <tr className="border-t">
+                                    <td className="font-semibold">Total</td>
+                                    <td className="font-semibold">
+                                      {(
+                                        order.orderItems.reduce(
+                                          (sum, item) => sum + item.price,
+                                          0
+                                        ) + 150
+                                      ).toFixed(2)}
+                                    </td>
+                                  </tr>
                                 </tbody>
                               </table>
                             </div>

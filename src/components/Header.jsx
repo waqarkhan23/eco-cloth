@@ -99,26 +99,31 @@ const Header = () => {
             ))}
           </div>
           <div className="pt-4 pb-3 border-t border-accent">
-            <div className="flex items-center px-5">
-              <div className="flex-shrink-0">
-                <User className="w-8 h-8 rounded-full" />
-              </div>
-              <div className="ml-3">
-                <div className="text-base font-medium text-text">User Name</div>
-                <div className="text-sm font-medium text-muted-foreground">
-                  user@example.com
-                </div>
-              </div>
-            </div>
-            <div className="mt-3 px-2 space-y-1">
-              <Button variant="ghost" className="w-full justify-start">
-                Profile
+            <div className=" flex items-center space-x-4">
+              {/* <div className="relative">
+              <Input
+                type="text"
+                placeholder="Search..."
+                className="pl-8 pr-2 py-1 rounded-full bg-secondary/20 focus:bg-background"
+              />
+              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+            </div> */}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => {
+                  navigate("/cart");
+                }}
+              >
+                <ShoppingCart className="w-5 h-5" />
               </Button>
-              <Button variant="ghost" className="w-full justify-start">
-                Settings
-              </Button>
-              <Button variant="ghost" className="w-full justify-start">
-                Logout
+
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate("/login")}
+              >
+                <User className="w-5 h-5" />
               </Button>
             </div>
           </div>
