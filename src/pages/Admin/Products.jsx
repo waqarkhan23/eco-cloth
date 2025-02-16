@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Trash2, Plus, Search } from "lucide-react";
+import { Trash2, Plus, Search, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
   Table,
@@ -80,6 +80,22 @@ const Products = () => {
     );
   }
 
+  const handleToggleFeatured = async (productId, currentFeaturedStatus) => {
+    try {
+      const response = await axiosInstance.put(
+        `/products/featured/${productId}`,
+        {
+          isFeatured: !currentFeaturedStatus,
+        }
+      );
+      if (response.status === 200) {
+        toast.success("Featured Successfully");
+      }
+    } catch (error) {
+      toast.error(error.message || "Error toggling product featured status");
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -119,7 +135,7 @@ const Products = () => {
                     <TableHead>Name</TableHead>
                     <TableHead>Category</TableHead>
                     <TableHead>Price</TableHead>
-
+                    <TableHead>Featured</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -140,7 +156,27 @@ const Products = () => {
                           <Badge variant="secondary">{product.category}</Badge>
                         </TableCell>
                         <TableCell>PKR {product.price.toFixed(2)}</TableCell>
-
+                        <TableCell>
+                          <Button
+                            variant={product.featured ? "default" : "outline"}
+                            size="sm"
+                            onClick={() =>
+                              handleToggleFeatured(
+                                product._id,
+                                product.isFeatured
+                              )
+                            }
+                          >
+                            <Star
+                              className={`h-4 w-4 mr-2 ${
+                                product.isFeatured
+                                  ? "text-yellow-400 fill-yellow-400"
+                                  : ""
+                              }`}
+                            />
+                            {product.isFeatured ? "Featured" : "Not Featured"}
+                          </Button>
+                        </TableCell>
                         <TableCell>
                           <div className="flex space-x-2">
                             <Button

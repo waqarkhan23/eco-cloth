@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSpring, animated } from "react-spring";
 
 import {
@@ -13,37 +13,16 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Card, CardContent } from "@/components/ui/card";
+import axiosInstance from "@/utils/axios";
+import { Badge } from "@/components/ui/badge";
 const images = ["/abanner1.png", "/abanner2.png", "/abanner3.png"];
-// Add this array of sample products
-const sampleProducts = [
-  {
-    id: 1,
-    name: "Eco-Friendly T-Shirt",
-    price: "$29.99",
-    image: "/product1.jpeg",
-  },
-  {
-    id: 2,
-    name: "Recycled Denim Jeans",
-    price: "$59.99",
-    image: "/product2.jpeg",
-  },
-  {
-    id: 3,
-    name: "Organic Cotton Dress",
-    price: "$79.99",
-    image: "/product3.jpeg",
-  },
-  {
-    id: 4,
-    name: "Sustainable Sneakers",
-    price: "$89.99",
-    image: "/product4.jpeg",
-  },
-];
+
 const LandingPage = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
+  const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
@@ -51,14 +30,29 @@ const LandingPage = () => {
 
     return () => clearInterval(interval);
   }, []);
+  useEffect(() => {
+    const fetchFeaturedProducts = async () => {
+      try {
+        setIsLoading(true);
+        const response = await axiosInstance.get("/get-featured-products");
+        setFeaturedProducts(response.data.products);
+        setIsLoading(false);
+      } catch (err) {
+        console.error("Error fetching featured products:", err);
+        setError("Failed to load featured products. Please try again later.");
+        setIsLoading(false);
+      }
+    };
 
+    fetchFeaturedProducts();
+  }, []);
   const [{ xy }, set] = useSpring(() => ({ xy: [0, 0] }));
 
   const parallaxEffect = (x, y) => {
     const dampen = 50; // Increase for more subtle movement
     return `translate3d(${x / dampen}px, ${y / dampen}px, 0)`;
   };
-
+  console.log(featuredProducts);
   return (
     <div
       className="relative min-h-screen overflow-hidden"
@@ -148,39 +142,70 @@ const LandingPage = () => {
           <h2 className="text-4xl font-bold mb-12 text-center text-primary">
             Featured Products
           </h2>
-          <Carousel
-            opts={{
-              align: "start",
-            }}
-            className="w-full max-w-5xl mx-auto"
-          >
-            <CarouselContent>
-              {sampleProducts.map((product) => (
-                <CarouselItem
-                  key={product.id}
-                  className="md:basis-1/2 lg:basis-1/3"
-                >
-                  <div className="p-1">
-                    <Card>
-                      <CardContent className="flex flex-col items-center p-6">
-                        <img
-                          src={product.image}
-                          alt={product.name}
-                          className="w-full h-48 object-cover mb-4 rounded-md"
-                        />
-                        <h3 className="font-semibold text-lg mb-2">
-                          {product.name}
-                        </h3>
-                        <p className="text-primary">{product.price}</p>
-                      </CardContent>
-                    </Card>
-                  </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
-          </Carousel>
+          {isLoading ? (
+            <p className="text-center">Loading featured products...</p>
+          ) : error ? (
+            <p className="text-center text-red-500">{error}</p>
+          ) : featuredProducts.length === 0 ? (
+            <p className="text-center">
+              No featured products available at the moment.
+            </p>
+          ) : (
+            <Carousel
+              opts={{
+                align: "start",
+              }}
+              className="w-full max-w-5xl mx-auto"
+            >
+              <CarouselContent>
+                {featuredProducts.map((product) => (
+                  <CarouselItem
+                    key={product._id}
+                    className="md:basis-1/2 lg:basis-1/3"
+                  >
+                    <div className="p-1">
+                      <Card className="overflow-hidden group relative transform transition-all duration-300 hover:scale-105 hover:shadow-2xl">
+                        <div className="relative h-80 overflow-hidden">
+                          <motion.img
+                            src={product.images[0].url}
+                            alt={product.name}
+                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.5 }}
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        </div>
+                        <CardContent className="p-5 bg-white/90 backdrop-blur-sm absolute bottom-0 left-0 right-0 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                          <h3 className="text-lg font-semibold mb-2 text-primary">
+                            {product.name}
+                          </h3>
+                          <p className="text-xl font-bold text-secondary mb-2">
+                            PKR {product.price}
+                          </p>
+                          <Button
+                            className="w-full bg-primary hover:bg-primary/90 text-white"
+                            onClick={() =>
+                              navigate(`/product-detail/${product._id}`)
+                            }
+                          >
+                            View Details
+                          </Button>
+                        </CardContent>
+                        <div className="absolute top-3 right-3 z-10">
+                          <Badge className="bg-primary text-white px-2 py-1 text-xs font-semibold">
+                            Featured
+                          </Badge>
+                        </div>
+                      </Card>
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious />
+              <CarouselNext />
+            </Carousel>
+          )}
         </div>
       </section>
 
