@@ -40,7 +40,7 @@ const Cart = () => {
   const formatPrice = (price) => {
     return price.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
-
+  console.log(cartItems);
   return (
     <motion.div
       className="container mx-auto px-4 py-8"

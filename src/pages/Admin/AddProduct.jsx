@@ -31,6 +31,7 @@ import { useAddProduct } from "@/api/addProduct";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css"; // Import Quill styles
 import axiosInstance from "@/utils/axios";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const ImageUpload = ({ images, setImages }) => {
   const onDrop = useCallback(
@@ -106,6 +107,9 @@ const formSchema = z.object({
   category: z.enum(["Men", "Women", "Kids"], {
     message: "Please select a valid category.",
   }),
+  sizes: z.array(z.enum(["S", "M", "L", "XL", "XXL"])).nonempty({
+    message: "Please select at least one size.",
+  }),
   color: z.string().min(1, { message: "Please enter a color." }),
 });
 
@@ -120,7 +124,7 @@ const AddProduct = () => {
       description: "",
       price: "",
       category: "",
-      size: [],
+      sizes: [],
       color: "",
     },
   });
@@ -172,7 +176,7 @@ const AddProduct = () => {
       throw new Error("Failed to upload images");
     }
   };
-
+  const sizes = ["S", "M", "L", "XL", "XXL"];
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -253,6 +257,54 @@ const AddProduct = () => {
                       <FormControl>
                         <Input placeholder="Enter color" {...field} />
                       </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="sizes"
+                  render={() => (
+                    <FormItem>
+                      <FormLabel>Sizes</FormLabel>
+                      <div className="flex flex-wrap gap-4">
+                        {sizes.map((size) => (
+                          <FormField
+                            key={size}
+                            control={form.control}
+                            name="sizes"
+                            render={({ field }) => {
+                              return (
+                                <FormItem
+                                  key={size}
+                                  className="flex flex-row items-start space-x-3 space-y-0"
+                                >
+                                  <FormControl>
+                                    <Checkbox
+                                      checked={field.value?.includes(size)}
+                                      onCheckedChange={(checked) => {
+                                        return checked
+                                          ? field.onChange([
+                                              ...field.value,
+                                              size,
+                                            ])
+                                          : field.onChange(
+                                              field.value?.filter(
+                                                (value) => value !== size
+                                              )
+                                            );
+                                      }}
+                                    />
+                                  </FormControl>
+                                  <FormLabel className="font-normal">
+                                    {size}
+                                  </FormLabel>
+                                </FormItem>
+                              );
+                            }}
+                          />
+                        ))}
+                      </div>
                       <FormMessage />
                     </FormItem>
                   )}

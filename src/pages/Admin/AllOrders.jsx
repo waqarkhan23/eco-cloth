@@ -276,23 +276,29 @@ const AllOrders = () => {
                                 <thead>
                                   <tr>
                                     <th className="text-left">Product</th>
-
+                                    <th className="text-left">Size</th>
                                     <th className="text-left">Price</th>
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  {order.orderItems.map((item, index) => (
-                                    <tr key={index}>
-                                      <td>{item.name}</td>
-                                      <td>{item.price.toFixed(2)}</td>
-                                    </tr>
-                                  ))}
+                                  {order.orderItems.map((item, index) => {
+                                    console.log("Order Item:", item.product);
+                                    return (
+                                      <tr key={index}>
+                                        <td>{item.product.name}</td>
+                                        <td>{item.size}</td>
+                                        <td>{item.product.price}</td>
+                                      </tr>
+                                    );
+                                  })}
                                   <tr className="border-t">
                                     <td className="font-semibold">Subtotal</td>
+                                    <td></td>
                                     <td>
                                       {order.orderItems
                                         .reduce(
-                                          (sum, item) => sum + item.price,
+                                          (sum, item) =>
+                                            sum + item.product.price,
                                           0
                                         )
                                         .toFixed(2)}
@@ -302,14 +308,17 @@ const AllOrders = () => {
                                     <td className="font-semibold">
                                       Shipping Fee
                                     </td>
+                                    <td></td>
                                     <td>150.00</td>
                                   </tr>
                                   <tr className="border-t">
                                     <td className="font-semibold">Total</td>
+                                    <td></td>
                                     <td className="font-semibold">
                                       {(
                                         order.orderItems.reduce(
-                                          (sum, item) => sum + item.price,
+                                          (sum, item) =>
+                                            sum + item.product.price,
                                           0
                                         ) + 150
                                       ).toFixed(2)}

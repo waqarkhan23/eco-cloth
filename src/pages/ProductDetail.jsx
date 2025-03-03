@@ -32,7 +32,11 @@ const ProductDetail = () => {
   const dispatch = useDispatch();
 
   const handleAddToCart = () => {
-    console.log("Adding to cart", selectedSize, selectedColor);
+    if (!selectedSize) {
+      toast.error("Please select a size before adding to cart.");
+      return;
+    }
+
     try {
       dispatch(
         addToCart({

@@ -56,12 +56,10 @@ const Checkout = () => {
 
   useEffect(() => {
     const total = cartItems.reduce((sum, item) => sum + item.price, 0);
-    const orderItems = [];
-    console.log(cartItems);
-    cartItems.map((item) => {
-      orderItems.push(item.id);
-    });
-
+    const orderItems = cartItems.map((item) => ({
+      product: item.id,
+      size: item.size,
+    }));
     setOrderData((prevData) => ({
       ...prevData,
       totalAmount: total,
