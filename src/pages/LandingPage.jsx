@@ -90,7 +90,7 @@ const LandingPage = () => {
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          Stylelista
+          Young Drip
         </motion.h1>
         <motion.p
           className="text-xl md:text-3xl mb-8 text-center max-w-2xl"
@@ -98,7 +98,7 @@ const LandingPage = () => {
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
-          Sustainable fashion for a stylish future
+          Wear Your Vibe
         </motion.p>
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}

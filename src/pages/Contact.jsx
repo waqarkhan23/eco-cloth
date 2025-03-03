@@ -5,7 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Phone, Mail, MapPin, Send } from "lucide-react";
+import { Mail, Send } from "lucide-react";
 
 const ContactUs = () => {
   const fadeIn = useSpring({
@@ -62,18 +62,18 @@ const ContactUs = () => {
               <CardTitle>Contact Information</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-center">
+              {/* <div className="flex items-center">
                 <Phone className="mr-2 h-5 w-5 text-primary" />
                 <span>+1 (555) 123-4567</span>
-              </div>
+              </div> */}
               <div className="flex items-center">
                 <Mail className="mr-2 h-5 w-5 text-primary" />
-                <span>support@stylehub.com</span>
+                <span>youngdrip001@gmail.com</span>
               </div>
-              <div className="flex items-center">
+              {/* <div className="flex items-center">
                 <MapPin className="mr-2 h-5 w-5 text-primary" />
                 <span>123 Fashion Street, Style City, 12345</span>
-              </div>
+              </div> */}
               <div className="mt-6">
                 <h3 className="font-semibold mb-2">Business Hours</h3>
                 <p>Monday - Friday: 9am - 6pm</p>
@@ -84,42 +84,6 @@ const ContactUs = () => {
           </Card>
         </motion.div>
       </div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5, duration: 0.5 }}
-        className="mt-12 text-center"
-      >
-        <h2 className="text-2xl font-semibold mb-4">
-          Frequently Asked Questions
-        </h2>
-        <div className="max-w-2xl mx-auto space-y-4">
-          {[
-            {
-              q: "What is your return policy?",
-              a: "We offer a 30-day return policy for all unworn items in original condition.",
-            },
-            {
-              q: "How long does shipping take?",
-              a: "Standard shipping typically takes 3-5 business days within the country.",
-            },
-            {
-              q: "Do you offer international shipping?",
-              a: "Yes, we ship to most countries worldwide. Shipping times may vary.",
-            },
-          ].map((faq, index) => (
-            <Card key={index}>
-              <CardHeader>
-                <CardTitle className="text-lg">{faq.q}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p>{faq.a}</p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </motion.div>
     </animated.div>
   );
 };

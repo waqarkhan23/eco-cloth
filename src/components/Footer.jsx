@@ -1,10 +1,5 @@
 import { Link } from "react-router-dom";
-import {
-  FaFacebookF,
-  FaTwitter,
-  FaInstagram,
-  FaEnvelope,
-} from "react-icons/fa";
+import { FaInstagram, FaEnvelope, FaTiktok } from "react-icons/fa";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Separator } from "./ui/separator";
@@ -16,11 +11,8 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
-            <h2 className="text-2xl font-bold text-primary">Stylista</h2>
-            <p className="text-muted-foreground">
-              Sustainable fashion for a better tomorrow. Join us in our mission
-              to make the world a little greener, one garment at a time.
-            </p>
+            <h2 className="text-2xl font-bold text-primary">Young Drip</h2>
+            <p className="text-muted-foreground">Wear your vibe.</p>
           </div>
 
           {/* Quick Links */}
@@ -48,7 +40,7 @@ const Footer = () => {
               Customer Service
             </h3>
             <ul className="space-y-2">
-              {["FAQ", "Returns", "Shipping", "Size Guide"].map((item) => (
+              {["FAQ"].map((item) => (
                 <li key={item}>
                   <Link
                     to={`/${item.toLowerCase().replace(" ", "-")}`}
@@ -85,21 +77,35 @@ const Footer = () => {
         {/* Bottom Section */}
         <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <div className="text-sm text-muted-foreground">
-            © 2025 Stylista. All rights reserved.
+            © 2025 Young Drip. All rights reserved.
           </div>
           <div className="flex space-x-4">
-            <Button variant="ghost" size="icon">
+            {/* <Button variant="ghost" size="icon">
               <FaFacebookF className="w-5 h-5" />
-            </Button>
-            <Button variant="ghost" size="icon">
-              <FaTwitter className="w-5 h-5" />
-            </Button>
-            <Button variant="ghost" size="icon">
-              <FaInstagram className="w-5 h-5" />
-            </Button>
-            <Button variant="ghost" size="icon">
-              <FaEnvelope className="w-5 h-5" />
-            </Button>
+            </Button> */}
+            <a
+              href="https://www.tiktok.com/@young.drip996?_t=ZS-8uJhLofKuqg&_r=1"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button variant="ghost" size="icon">
+                <FaTiktok className="w-5 h-5" />
+              </Button>
+            </a>
+            <a
+              href="https://www.instagram.com/young_drip.1?igsh=bThsZGFubXY3aTc1&utm_source=qr"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button variant="ghost" size="icon">
+                <FaInstagram className="w-5 h-5" />
+              </Button>
+            </a>
+            <a href="mailto:youngdrip001@gmail.com?subject=Inquiry%20from%20Young%20Drip%20Website&body=Hello%20Young%20Drip%20Team,%0A%0AI%20have%20a%20question%20about...">
+              <Button variant="ghost" size="icon">
+                <FaEnvelope className="w-5 h-5" />
+              </Button>
+            </a>
           </div>
         </div>
       </div>

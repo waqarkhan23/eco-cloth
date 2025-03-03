@@ -28,6 +28,7 @@ import { AuthProvider } from "./utils/AuthContext";
 import ProtectedRoute from "./utils/ProtectedRoutes";
 import About from "./pages/About";
 import ContactUs from "./pages/Contact";
+import FAQ from "./pages/FAQ";
 const queryClient = new QueryClient();
 
 function App() {
@@ -94,6 +95,18 @@ function App() {
                       <Header />
                       <main className="flex-grow">
                         <ContactUs />
+                      </main>
+                      <Footer />
+                    </>
+                  }
+                />
+                <Route
+                  path="/faq"
+                  element={
+                    <>
+                      <Header />
+                      <main className="flex-grow">
+                        <FAQ />
                       </main>
                       <Footer />
                     </>
