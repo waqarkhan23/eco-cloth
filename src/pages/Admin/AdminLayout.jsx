@@ -45,6 +45,7 @@ const AdminLayout = () => {
         // { icon: FaList, text: "Manage Orders", path: "/admin/orders/manage" },
       ],
     },
+    { icon: FaChartBar, text: "Banners", path: "/admin/banner" },
   ];
   return (
     <div className="flex h-screen bg-background">

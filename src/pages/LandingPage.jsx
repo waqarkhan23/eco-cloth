@@ -15,21 +15,45 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import axiosInstance from "@/utils/axios";
 import { Badge } from "@/components/ui/badge";
-const images = ["/abanner1.png", "/abanner2.png", "/abanner3.png"];
+const fallbackImages = ["/abanner1.png", "/abanner2.png", "/abanner3.png"];
 
 const LandingPage = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [bannerImages, setBannerImages] = useState([]);
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchBanners = async () => {
+      try {
+        const response = await axiosInstance.get("/banners");
+        const fetchedBanners = response.data;
+        setBannerImages(
+          fetchedBanners.length > 0
+            ? fetchedBanners.map((banner) => banner.imageUrl)
+            : fallbackImages
+        );
+      } catch (error) {
+        console.error("Error fetching banners:", error);
+        setBannerImages(fallbackImages);
+      }
+    };
+
+    fetchBanners();
+  }, []);
+
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
+      setCurrentImageIndex(
+        (prevIndex) => (prevIndex + 1) % bannerImages.length
+      );
     }, 5000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [bannerImages]);
+
   useEffect(() => {
     const fetchFeaturedProducts = async () => {
       try {
@@ -71,7 +95,7 @@ const LandingPage = () => {
           transition={{ duration: 1.5 }}
         >
           <animated.img
-            src={images[currentImageIndex]}
+            src={bannerImages[currentImageIndex]}
             alt="Background"
             className="w-full h-full object-cover"
             style={{ transform: xy.to(parallaxEffect) }}

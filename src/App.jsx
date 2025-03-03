@@ -29,6 +29,7 @@ import ProtectedRoute from "./utils/ProtectedRoutes";
 import About from "./pages/About";
 import ContactUs from "./pages/Contact";
 import FAQ from "./pages/FAQ";
+import BannerContent from "./pages/Admin/BannerContent";
 const queryClient = new QueryClient();
 
 function App() {
@@ -146,6 +147,7 @@ function App() {
                     <Route path="products/add" element={<AddProduct />} />
                     <Route path="orders" element={<AllOrders />} />
                     <Route path="orders/manage" element={<ManageOrders />} />
+                    <Route path="banner" element={<BannerContent />} />
                   </Route>
                 </Route>
                 <Route path="*" element={<Navigate to="/" />} />
