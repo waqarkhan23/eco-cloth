@@ -1,16 +1,23 @@
-@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap");
+@font-face {
+  font-family: "SF Pro Display";
+  src: url("/font/SFPRODISPLAYREGULAR.OTF") format("opentype"),
+    url("/font/SFPRODISPLAYREGULAR.OTF") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 @layer base {
   :root {
-    --text: #0f0d02;
-    --background: #fefdf7;
-    --primary: #dbcc29;
-    --secondary: #bdea80;
-    --accent: #88e358;
-    --font-family: "Roboto", sans-serif;
+    --text: #000000;
+    --background: #ffffff;
+    --primary: #000000;
+    --secondary: #ffffff;
+    --accent: #808080;
+    --font-family: "SF Pro Display", sans-serif;
     --radius: 0.5rem;
 
     /* Keep existing Shadcn UI variables */

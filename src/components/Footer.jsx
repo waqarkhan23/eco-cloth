@@ -17,7 +17,7 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-secondary">
+            <h3 className="text-lg font-semibold mb-4 text-primary">
               Quick Links
             </h3>
             <ul className="space-y-2">
@@ -36,7 +36,7 @@ const Footer = () => {
 
           {/* Customer Service */}
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-secondary">
+            <h3 className="text-lg font-semibold mb-4 text-primary">
               Customer Service
             </h3>
             <ul className="space-y-2">
@@ -67,7 +67,7 @@ const Footer = () => {
                 placeholder="Your email address"
                 className="bg-background border-accent"
               />
-              <Button className="w-full">Subscribe</Button>
+              <Button className="w-full text-white">Subscribe</Button>
             </form>
           </div>
         </div>

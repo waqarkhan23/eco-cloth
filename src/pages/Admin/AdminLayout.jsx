@@ -55,7 +55,7 @@ const AdminLayout = () => {
         animate={{ width: isSidebarOpen ? 240 : 80 }}
         className="bg-primary text-primary-foreground p-4 flex flex-col"
       >
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-8 text-white">
           <h1 className={`text-xl font-bold ${isSidebarOpen ? "" : "hidden"}`}>
             Admin Panel
           </h1>
@@ -69,17 +69,17 @@ const AdminLayout = () => {
         <nav className="flex-grow">
           <ul className="space-y-2">
             {sidebarItems.map((item, index) => (
-              <li key={index}>
+              <li key={index} className="text-white">
                 {item.children ? (
                   <DropdownMenu>
-                    <DropdownMenuTrigger className="flex items-center w-full p-2 hover:bg-primary-foreground/10 rounded">
+                    <DropdownMenuTrigger className="flex items-center text-white w-full p-2 rounded">
                       <item.icon className="w-6 h-6 mr-2" />
                       {isSidebarOpen && (
                         <>
-                          <span className="flex-grow text-left">
+                          <span className="flex-grow text-left text-white">
                             {item.text}
                           </span>
-                          <FaChevronDown className="w-4 h-4" />
+                          <FaChevronDown className="w-4 h-4 text-white" />
                         </>
                       )}
                     </DropdownMenuTrigger>

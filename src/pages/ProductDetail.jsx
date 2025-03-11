@@ -141,7 +141,7 @@ const ProductDetail = () => {
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.3 }}
           >
-            <Badge variant="secondary" className="mr-2">
+            <Badge className="mr-2 bg-black text-white">
               {product.category}
             </Badge>
           </motion.div>
@@ -201,7 +201,7 @@ const ProductDetail = () => {
 
           {/* Add to Cart and Wishlist */}
           <div className="flex space-x-4 mb-6">
-            <Button className="flex-1" onClick={handleAddToCart}>
+            <Button className="flex-1 text-white" onClick={handleAddToCart}>
               <ShoppingCart className="mr-2" size={20} /> Add to Cart
             </Button>
           </div>

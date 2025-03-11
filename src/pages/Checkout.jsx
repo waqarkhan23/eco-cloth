@@ -294,7 +294,7 @@ const Checkout = () => {
               </RadioGroup>
             </CardContent>
             <CardFooter>
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full text-white">
                 Place Order
               </Button>
             </CardFooter>

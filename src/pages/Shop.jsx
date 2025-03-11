@@ -72,7 +72,9 @@ const Shop = () => {
               size={20}
             />
           </div>
-          <Button onClick={handleSearch}>Search</Button>
+          <Button onClick={handleSearch} className="text-white">
+            Search
+          </Button>
         </div>
         <select
           value={selectedCategory}
@@ -134,10 +136,11 @@ const Shop = () => {
                 </CardContent>
                 <CardFooter className="p-4">
                   <Button
-                    className="w-full"
+                    className="w-full text-white"
                     onClick={() => navigate(`/product-detail/${product._id}`)}
                   >
-                    <ShoppingCart className="mr-2" size={20} /> Add to Cart
+                    <ShoppingCart className="mr-2 text-white" size={20} /> Add
+                    to Cart
                   </Button>
                 </CardFooter>
               </Card>

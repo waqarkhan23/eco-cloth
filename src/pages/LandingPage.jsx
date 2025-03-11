@@ -109,7 +109,7 @@ const LandingPage = () => {
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen text-white">
         <motion.h1
-          className="text-6xl md:text-8xl font-bold mb-6 text-center bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary"
+          className="text-6xl md:text-8xl font-bold mb-6 text-center bg-clip-text"
           initial={{ y: -50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.2 }}
@@ -204,7 +204,7 @@ const LandingPage = () => {
                           <h3 className="text-lg font-semibold mb-2 text-primary">
                             {product.name}
                           </h3>
-                          <p className="text-xl font-bold text-secondary mb-2">
+                          <p className="text-xl font-bold text-black mb-2">
                             PKR {product.price}
                           </p>
                           <Button

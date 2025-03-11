@@ -340,7 +340,7 @@ const AddProduct = () => {
 
               <Button
                 type="submit"
-                className="w-full"
+                className="w-full text-white"
                 disabled={isSubmitting || isLoading}
               >
                 {isSubmitting || isLoading ? (

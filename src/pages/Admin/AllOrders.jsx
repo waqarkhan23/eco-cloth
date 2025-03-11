@@ -155,7 +155,10 @@ const AllOrders = () => {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button className="w-full md:w-auto" onClick={handleRefresh}>
+            <Button
+              className="w-full md:w-auto text-white"
+              onClick={handleRefresh}
+            >
               <RefreshCw className="mr-2" size={20} />
               Refresh
             </Button>

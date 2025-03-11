@@ -62,8 +62,8 @@ const Cart = () => {
             Looks like you haven't added any items to your cart yet.
           </p>
           <Link to="/">
-            <Button size="lg">
-              <ShoppingBag className="mr-2" size={20} />
+            <Button size="lg" className="text-white">
+              <ShoppingBag className="mr-2 text-white" size={20} />
               Start Shopping
             </Button>
           </Link>
@@ -119,7 +119,7 @@ const Cart = () => {
               <span>PKR {formatPrice(totalPrice)}</span>
             </div>
             <Link to="/checkout">
-              <Button className="w-full">Proceed to Checkout</Button>
+              <Button className="w-full text-white">Proceed to Checkout</Button>
             </Link>
           </motion.div>
         </div>

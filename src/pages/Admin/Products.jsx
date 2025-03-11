@@ -121,9 +121,9 @@ const Products = () => {
                 className="pl-10"
               />
             </div>
-            <Link to="/admin/product/add">
-              <Button>
-                <Plus className="mr-2 h-4 w-4" /> Add Product
+            <Link to="/admin/products/add">
+              <Button className="text-white">
+                <Plus className="mr-2 h-4 w-4 text-white" /> Add Product
               </Button>
             </Link>
           </div>
