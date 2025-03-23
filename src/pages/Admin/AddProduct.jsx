@@ -104,7 +104,7 @@ const formSchema = z.object({
   price: z.string().refine((val) => !isNaN(parseFloat(val)), {
     message: "Price must be a number.",
   }),
-  category: z.enum(["Men", "Women", "Kids"], {
+  category: z.enum(["Men", "Women", "Kids","Unisex"], {
     message: "Please select a valid category.",
   }),
   sizes: z.array(z.enum(["S", "M", "L", "XL", "XXL"])).nonempty({
@@ -239,8 +239,8 @@ const AddProduct = () => {
                           <SelectItem value="Men">Men</SelectItem>
                           <SelectItem value="Women">Women</SelectItem>
                           <SelectItem value="Kids">Kids</SelectItem>
-                          <SelectItem value="Accessories">
-                            Accessories
+                          <SelectItem value="Unisex">
+                          Unisex
                           </SelectItem>
                         </SelectContent>
                       </Select>

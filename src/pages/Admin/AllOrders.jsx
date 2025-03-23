@@ -284,7 +284,7 @@ const AllOrders = () => {
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  {order.orderItems.map((item, index) => {
+                                  {order?.orderItems?.map((item, index) => {
                                     console.log("Order Item:", item.product);
                                     return (
                                       <tr key={index}>

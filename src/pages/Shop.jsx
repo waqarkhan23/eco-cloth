@@ -84,6 +84,7 @@ const Shop = () => {
           <option value="All">All Categories</option>
           <option value="Men">MEN</option>
           <option value="Women">Women</option>
+          <option value="Unisex">Unisex</option>
           <option value="Kids">Kids</option>
         </select>
       </div>
