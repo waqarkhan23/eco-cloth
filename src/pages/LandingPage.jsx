@@ -86,25 +86,28 @@ const LandingPage = () => {
     >
       {/* Full-screen image slider with 3D effect */}
       <AnimatePresence initial={false}>
-        <motion.div
-          key={currentImageIndex}
-          className="absolute inset-0 w-full h-full"
-          initial={{ opacity: 0, scale: 1.1 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.9 }}
-          transition={{ duration: 1.5 }}
-        >
-          <animated.img
-            src={bannerImages[currentImageIndex]}
-            alt="Background"
-            className="w-full h-full object-cover"
-            style={{ transform: xy.to(parallaxEffect) }}
-          />
-        </motion.div>
-      </AnimatePresence>
+  <motion.div
+    key={currentImageIndex}
+    className="absolute inset-0 w-full aspect-[16/9] max-h-[1080px] max-w-[1920px] mx-auto"
+    initial={{ opacity: 0, scale: 1.1 }}
+    animate={{ opacity: 1, scale: 1 }}
+    exit={{ opacity: 0, scale: 0.9 }}
+    transition={{ duration: 1.5 }}
+  >
+    <animated.img
+      src={bannerImages[currentImageIndex]}
+      alt="Background"
+      className="w-full h-full object-fill"
+      style={{ 
+        transform: xy.to(parallaxEffect),
+        backgroundColor: 'black' // Adds black background for any potential gaps
+      }}
+    />
+  </motion.div>
+</AnimatePresence>
 
       {/* Overlay with gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/60" />
+      <div className="absolute inset-0 w-full aspect-[16/9] max-h-[1080px] max-w-[1920px] mx-auto bg-gradient-to-b from-black/60 via-black/40 to-black/60" />
 
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen text-white">

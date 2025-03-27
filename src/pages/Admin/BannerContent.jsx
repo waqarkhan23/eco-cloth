@@ -96,15 +96,15 @@ const BannerContent = () => {
             {newBanner && (
               <div className="mt-2">
                 <p>{newBanner.name}</p>
-                <Button onClick={handleUpload} disabled={isLoading}>
+                <Button onClick={handleUpload} disabled={isLoading} className="text-white">
                   {isLoading ? (
                     <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin text-white" />
                       Uploading...
                     </>
                   ) : (
                     <>
-                      <Upload className="mr-2 h-4 w-4" />
+                      <Upload className="mr-2 h-4 w-4 text-white" />
                       Upload Banner
                     </>
                   )}
