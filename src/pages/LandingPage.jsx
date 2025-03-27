@@ -237,7 +237,7 @@ const LandingPage = () => {
       </section>
 
       {/* Featured Collections with hover effects */}
-      <section className="relative py-24 bg-secondary">
+      {/* <section className="relative py-24 bg-secondary">
         <div className="container mx-auto px-4">
           <h2 className="text-4xl font-bold mb-12 text-center text-secondary-foreground">
             Featured Collections
@@ -275,7 +275,7 @@ const LandingPage = () => {
             )}
           </div>
         </div>
-      </section>
+      </section> */}
     </div>
   );
 };

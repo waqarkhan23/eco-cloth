@@ -10,6 +10,7 @@ import {
   FaChevronDown,
   FaShoppingCart,
   FaClipboardList,
+  FaQuestionCircle,
 } from "react-icons/fa";
 import {
   DropdownMenu,
@@ -45,6 +46,7 @@ const AdminLayout = () => {
         // { icon: FaList, text: "Manage Orders", path: "/admin/orders/manage" },
       ],
     },
+    { icon: FaQuestionCircle, text: "Q&A Management", path: "/admin/qa" },
     { icon: FaChartBar, text: "Banners", path: "/admin/banner" },
   ];
   return (

@@ -17,6 +17,7 @@ import Loader from "@/components/Loader";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
 import { addToCart } from "@/store/cartSlice";
+import ProductQA from "@/components/ProductQA";
 
 const sanitizeHTML = (html) => {
   const parser = new DOMParser();
@@ -207,12 +208,13 @@ const ProductDetail = () => {
           </div>
         </div>
       </div>
-
+      <ProductQA productId={product._id} />
       {/* Product Details Tabs */}
       <Tabs defaultValue="description" className="mt-12">
         <TabsList>
           <TabsTrigger value="description">Description</TabsTrigger>
           <TabsTrigger value="specifications">Specifications</TabsTrigger>
+
           <TabsTrigger value="policies">Policies</TabsTrigger>
         </TabsList>
         <TabsContent value="description" className="mt-4">
@@ -233,6 +235,7 @@ const ProductDetail = () => {
             </li>
           </ul>
         </TabsContent>
+      
         <TabsContent value="policies" className="mt-4">
           <h3 className="text-lg font-semibold mb-2">Product Policies</h3>
           <ul className="list-disc pl-5">

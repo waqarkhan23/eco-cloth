@@ -24,6 +24,7 @@ import Products from "./pages/Admin/Products";
 import AddProduct from "./pages/Admin/AddProduct";
 import AllOrders from "./pages/Admin/AllOrders";
 import ManageOrders from "./pages/Admin/ManageOrders";
+import ManageQA from "./pages/Admin/ManageQA";
 import { AuthProvider } from "./utils/AuthContext";
 import ProtectedRoute from "./utils/ProtectedRoutes";
 import About from "./pages/About";
@@ -147,6 +148,7 @@ function App() {
                     <Route path="products/add" element={<AddProduct />} />
                     <Route path="orders" element={<AllOrders />} />
                     <Route path="orders/manage" element={<ManageOrders />} />
+                    <Route path="qa" element={<ManageQA />} />
                     <Route path="banner" element={<BannerContent />} />
                   </Route>
                 </Route>
