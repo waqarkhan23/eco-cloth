@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Trash2, Plus, Search, Star } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Trash2, Plus, Search, Star, Edit } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Table,
   TableBody,
@@ -33,6 +33,7 @@ const Products = () => {
   const [deleteProductId, setDeleteProductId] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const { data: products, isLoading, isError, error } = useProductsQuery();
+  const navigate = useNavigate();
 
   const filteredProducts = products
     ? products.filter((product) =>
@@ -185,6 +186,15 @@ const Products = () => {
                               onClick={() => handleDeleteClick(product._id)}
                             >
                               <Trash2 className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              onClick={() =>
+                                navigate(`/admin/products/edit/${product._id}`)
+                              }
+                            >
+                              <Edit className="h-4 w-4" />
                             </Button>
                           </div>
                         </TableCell>

@@ -18,6 +18,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import OrderNotification from "@/components/OrderNotification";
 
 const AdminLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -49,6 +50,7 @@ const AdminLayout = () => {
     { icon: FaQuestionCircle, text: "Q&A Management", path: "/admin/qa" },
     { icon: FaChartBar, text: "Banners", path: "/admin/banner" },
   ];
+
   return (
     <div className="flex h-screen bg-background">
       {/* Sidebar */}
@@ -119,9 +121,24 @@ const AdminLayout = () => {
       </motion.aside>
 
       {/* Main content */}
-      <main className="flex-grow p-8 overflow-auto">
-        <Outlet />
-      </main>
+      <div className="flex-1 flex flex-col">
+        {/* Header */}
+        <header className="h-16 border-b border-border bg-background flex items-center justify-between px-6">
+          <div className="flex items-center space-x-4">
+            <h2 className="text-xl font-semibold text-primary">
+              Admin Dashboard
+            </h2>
+          </div>
+          <div className="flex items-center space-x-4">
+            <OrderNotification />
+          </div>
+        </header>
+
+        {/* Main content area */}
+        <main className="flex-1 p-6 overflow-auto">
+          <Outlet />
+        </main>
+      </div>
     </div>
   );
 };

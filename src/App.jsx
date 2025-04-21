@@ -22,6 +22,7 @@ import AdminLayout from "./pages/Admin/AdminLayout";
 import Dashboard from "./pages/Admin/Dashboard";
 import Products from "./pages/Admin/Products";
 import AddProduct from "./pages/Admin/AddProduct";
+import EditProduct from "./pages/Admin/EditProduct";
 import AllOrders from "./pages/Admin/AllOrders";
 import ManageOrders from "./pages/Admin/ManageOrders";
 import ManageQA from "./pages/Admin/ManageQA";
@@ -146,6 +147,7 @@ function App() {
                     <Route index element={<Dashboard />} />
                     <Route path="products" element={<Products />} />
                     <Route path="products/add" element={<AddProduct />} />
+                    <Route path="products/edit/:id" element={<EditProduct />} />
                     <Route path="orders" element={<AllOrders />} />
                     <Route path="orders/manage" element={<ManageOrders />} />
                     <Route path="qa" element={<ManageQA />} />
